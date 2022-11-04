@@ -22,36 +22,28 @@
             <div class="body ylmty">
                 <h5 style="font-size:25px;">用户</h5>
                 <el-divider />
-                <el-row :gutter="10">
-                    <el-col :span="16">
-                        <div class="body ylmty">
-                            <el-transfer v-model="choosed_user" filterable :filter-method="filterMethod"
-                                filter-placeholder="State Abbreviations" :data="userlist" />
-                        </div>
-                    </el-col>
-                    <el-col :span="4">
-                        <div class="body ylmty">
-                            <el-radio-group v-model="choosed_group" class="ml-4" v-for="(item, index) in all_groups"
-                                :key="index">
-                                <el-radio :label="index" size="large" @click="chooseGroup(index)"
-                                    style="width:110px;margin:5px 0;" border>{{
-                                            item.name
-                                    }}</el-radio>
-                            </el-radio-group>
-                        </div>
-                    </el-col>
-                    <el-col :span="4">
-                        <div class="body ylmty">
-                            <el-button @click="setUsertoGroup()" type="success">Success</el-button>
-                        </div>
-                    </el-col>
-                </el-row>
+                <el-table :data="filteruserlist" stripe style="width: 100%">
+                    <el-table-column label="ID" prop="id" />
+                    <el-table-column label="用户名" prop="name" />
+                    <el-table-column label="用户组" prop="group" />
+                    <el-table-column align="right">
+                        <template #header>
+                            <el-input v-model="search" size="small" placeholder="Type to search" />
+                        </template>
+                        <template #default="scope">
+                            <el-button size="small" type="warning" @click="handleEdit(scope.$index, scope.row)">Edit
+                            </el-button>
+                            <el-button size="small" type="danger" @click="handleDelete(scope.$index, scope.row)">Delete
+                            </el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
             </div>
         </div>
     </div>
 
 
-    <!-- 新增用户模板 -->
+    <!-- 新增用户组模板 -->
     <el-dialog v-model="dialogVisible" title="新建用户组" width="40%" :before-close="handleClose" style="min-width:400px">
         <el-form :inline="true" :model="new_group" class="demo-form-inline">
             <el-input v-model="new_group.name" class="w-50 m-2" size="large" placeholder="用户组名称" />
@@ -74,6 +66,30 @@
         </template>
     </el-dialog>
 
+    <!-- 编辑用户模板 -->
+    <el-dialog v-model="dialogFormVisible" title="编辑用户" width="40%" :before-close="handleClose" style="min-width:400px">
+        <el-form :model="Edit_form">
+            <el-form-item label="ID" :label-width="'140px'">
+                <el-input v-model="Edit_form.id" autocomplete="off" />
+            </el-form-item>
+            <el-form-item label="用户名" :label-width="'140px'">
+                <el-input v-model="Edit_form.name" autocomplete="off" />
+            </el-form-item>
+            <el-form-item label="用户组" :label-width="'140px'">
+                <el-select v-model="Edit_form.group" placeholder="Please select a zone">
+                    <el-option v-for="(item, index) in all_groups" :key="index" :label="item.name" :value="item.name" />
+                </el-select>
+            </el-form-item>
+        </el-form>
+        <template #footer>
+            <span class="dialog-footer">
+                <el-button @click="dialogFormVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="setUsertoGroup">
+                    Confirm
+                </el-button>
+            </span>
+        </template>
+    </el-dialog>
 
 </template>
 
@@ -83,17 +99,33 @@ import { ArrowRight, Delete, Plus } from '@element-plus/icons-vue';
 import axios from 'axios';
 import Qs from 'qs';
 import { ElMessage, ElMessageBox } from 'element-plus';
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import store from '@/store';
+
+// 载入加载
+onMounted(() => {
+    getAllGrounp()
+    getUserList()
+})
+
+
 // 选择用户组
 const chooseGroup = (index) => {
     choosed_group.value = index
 }
+// 
+const dialogFormVisible = ref(false)
+const Edit_form = reactive({
+    name: null,
+    group: null,
+    id: null,
+})
+
 // 保存用户分配
 const choosed_group = ref<number>(0)
 const setUsertoGroup = () => {
-    let Group = all_groups.value[choosed_group.value]
-    let userlist = choosed_user.value
+    // let Edit_Group = Edit_form.group
+    // let Edit_Username = Edit_form.name
 
     if (userlist.length == 0) {
         ElMessage.warning("未选择用户..")
@@ -105,8 +137,9 @@ const setUsertoGroup = () => {
         method: 'post',
         data: Qs.stringify({
             token: store.getters.isnotUserlogin.token,
-            group: Group.name,
-            userlist: JSON.stringify(userlist),
+            group: Edit_form.group,
+            id: Edit_form.id,
+            newusername: Edit_form.name
         })
     }).then((res) => {
         console.log(res.data)
@@ -124,30 +157,45 @@ const setUsertoGroup = () => {
     })
 }
 
+// 搜索用户
+const search = ref('')
+const filteruserlist = computed(() =>
+    userlist.filter(
+        (data) =>
+            !search.value ||
+            data.name.toLowerCase().includes(search.value.toLowerCase())
+    )
+)
+const handleEdit = (index: number, row: User) => {
+    dialogFormVisible.value = true
+    Edit_form.name = row.name
+    Edit_form.group = row.group
+    Edit_form.id = row.id
+    console.log(index)
+}
+const handleDelete = (index: number, row: User) => {
+    console.log(index, row)
+}
 
+interface User {
+    name: string
+    group: string
+    id: number
+}
 // 用户列表
-const userlist = reactive([])
+let userlist = reactive([])
 const choosed_user = ref([])
 const getUserList = () => {
     axios({
         url: "http://127.0.0.1:9000/api/ylmty-userlist/",
         method: 'get'
     }).then((res) => {
-        let data = res.data
-        data.forEach((user) => {
-            userlist.push({
-                lable: user.name,
-                key: user.name,
-                name: user.name
-            })
-        });
+        Object.assign(userlist, res.data)
+        console.log(userlist)
     })
 }
 
-// 搜索用户
-const filterMethod = (query, item) => {
-    return item.name.toLowerCase().includes(query.toLowerCase())
-}
+
 
 // 添加用户组模态框
 const dialogVisible = ref(false)
@@ -166,11 +214,6 @@ const handleClose = (done: () => void) => {
 
         })
 }
-// 载入加载
-onMounted(() => {
-    getAllGrounp()
-    getUserList()
-})
 
 // 用户组表单
 const new_group = reactive({
@@ -280,7 +323,7 @@ const deleteGroup = (name) => {
                     ElMessage.error('当前用户权限不足.')
                     return
                 }
-                if (res.data == 'ok'|| res.data == 'perm_pass') {
+                if (res.data == 'ok' || res.data == 'perm_pass') {
                     ElMessage.success('成功删除.')
                     getAllGrounp()
                 }
@@ -349,7 +392,7 @@ const saveNewGroup = () => {
                         perm_list: JSON.stringify(perm_list)
                     })
                 }).then((res) => {
-                    console.log(res.data)
+                    // console.log(res.data)
                     if (res.data == 'nologin') {
                         ElMessage.error('用户信息过期或未登录.')
                         return
