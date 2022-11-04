@@ -1,6 +1,6 @@
 # Believer in Web-Design
 ## Introduce
-#### 1. This project consists of Vue3+Emblement Plus+Typescript
+#### 1. This project consists of Vue3+Element Plus+Typescript
 #### 2. There may be a lot of bugs, but I'm gradually improving
 
 ## Project setup
