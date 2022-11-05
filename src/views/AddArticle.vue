@@ -16,8 +16,9 @@
             </el-col>
             <el-col :span="14">
                 <div class="continue body ylmty">
-                    <div>
+                    <div class="uploadImg">
                         <input type="file" value="" id="upload" accept="image/*" @change="handleFiles">
+                        <el-image style="height: 150px" :src=coverImg :fit="'cover'" />
                     </div>
                 </div>
             </el-col>
@@ -45,8 +46,7 @@ const article_info = reactive({
     describe: '',
     html: "",
 })
-let coverImg = ref(null)
-
+let coverImg = ref()
 //选择封面
 const handleFiles = (event) => {
     let files = event.target.files
@@ -54,7 +54,8 @@ const handleFiles = (event) => {
         let reader = new FileReader()
         reader.readAsDataURL(files[0])
         reader.onload = function () {
-            coverImg = this.result;
+            coverImg.value = this.result;
+            console.log(coverImg);
         }
     } else {
         console.log("封面不可为空")
@@ -161,4 +162,9 @@ const handleUploadImage = (event, insertImage, files) => {
 /* .el-form-item{
     margin-top: 22px;
 } */
+.uploadImg{
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+}
 </style>
