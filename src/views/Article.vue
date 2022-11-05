@@ -9,66 +9,76 @@
                         <div class="header">
                             {{ article_data.title }}
                         </div>
-                    </div>
-                    <div class="body ylmty">
-                        <div class="ylmty">
+                        <div class="body">
                             {{ article_data.describe }}
                         </div>
-                    </div>
-                    <div class="body ylmty">
                         <div class="article_content">
                             <v-md-preview-html :html="article_data.content" preview-class="vuepress-markdown-body">
                             </v-md-preview-html>
-                        </div>
-                    </div>
-                    <div class="body ylmty">
-                        <el-button v-if="toNumber(article_data.pre_id) == 0" @click="toOtherPage(article_data.pre_id)"
-                            type="info" disabled>没有上一篇了</el-button>
-                        <el-button v-else @click="toOtherPage(article_data.pre_id)" type="primary">上一篇</el-button>
-                        <el-button v-if="toNumber(article_data.next_id) == 0" @click="toOtherPage(article_data.next_id)"
-                            type="info" disabled>没有下一篇了</el-button>
-                        <el-button v-else @click="toOtherPage(article_data.next_id)" type="primary">下一篇</el-button>
-                    </div>
-                    <div class="body ylmty">
-                        <h1>评论区:</h1>
-                        <el-input v-model="comment" :rows="6" type="textarea" placeholder="Please input" />
-                        <el-button @click="sendNewcomment()" type="primary">提交</el-button>
-                        <div class="body ylmty">
-                            <el-scrollbar height="800">
-                                <div class="scrollbar-demo-item" v-for="(item, index) in comments_data" :key="index">
-                                    <span>{{ item.nickName }} 说：</span>
-                                    <el-divider />
-                                    <p>{{ item.comment }}</p>
+                            <div class="Updown_buttons">
+                                <div class="item">
+                                    <el-button @click="toOtherPage(article_data.pre_id)" size="small" type="primary">
+                                        上一篇
+                                    </el-button>
+                                    <p v-if="toNumber(article_data.pre_id) == 0">没有了</p>
+                                    <p v-else>{{ article_data.pre_title }}</p>
                                 </div>
-                            </el-scrollbar>
+                                <el-divider />
+                                <div class="item">
+                                    <el-button @click="toOtherPage(article_data.next_id)" size="small" type="primary">
+                                        下一篇
+                                    </el-button>
+                                    <p v-if="toNumber(article_data.next_id) == 0">没有了</p>
+                                    <p v-else>{{ article_data.next_title }}</p>
+                                </div>
+                            </div>
+                            <!-- 点赞收藏打赏 -->
+                            <div class="likeBtn">
+                                <el-row>
+                                    <el-col :span="8">
+                                        <i @click="tolike()" v-if="article_data_info.like" class="iconfont icon-dianzan"
+                                            style="color:#409EFF;"></i>
+                                        <i @click="tolike()" v-else class="iconfont icon-dianzan"></i>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <i @click="tofavor()" v-if="article_data_info.favor"
+                                            class="iconfont icon-shoucang" style="color:#E6A23C;"></i>
+                                        <i @click="tofavor()" v-else class="iconfont icon-shoucang"></i>
+                                    </el-col>
+                                    <el-col :span="8">
+                                        <i v-if="article_data_info.dashang" class="iconfont icon-dashang1"
+                                            style="color:#E6A23C;"></i>
+                                        <i v-else class="iconfont icon-dashang1"></i>
+                                    </el-col>
+                                </el-row>
+                            </div>
+                        </div>
+                        <div class="comments_box">
+                            <h1>评论区<span v-if="comments_data == 0">(暂无评论)</span>:</h1>
+                            <el-input v-model="comment" :rows="6" type="textarea" placeholder="Please input" />
+                            <el-button @click="sendNewcomment()" type="primary" style="margin-top: 10px;">提交评论</el-button>
+                            <div v-if="comments_data != 0" class="body ylmty">
+                                <el-scrollbar height="400">
+                                    <div class="scrollbar-demo-item" v-for="(item, index) in comments_data"
+                                        :key="index">
+                                        <span>{{ item.nickName }} 说：</span>
+                                        <el-divider />
+                                        <p>{{ item.comment }}</p>
+                                    </div>
+                                </el-scrollbar>
+                            </div>
                         </div>
                     </div>
+
+
+
                 </el-col>
 
                 <el-col :xs="24" :lg="8" class="affix-container">
                     <el-affix target=".affix-container" :offset="60">
                         <div class="body ylmty">
                             <el-image :src="article_data.cover" :fit="'cover'" />
-                        </div>
-                        <!-- 点赞收藏打赏 -->
-                        <div class="body ylmty likeBtn">
-                            <el-row>
-                                <el-col :span="8">
-                                    <i @click="tolike()" v-if="article_data_info.like" class="iconfont icon-dianzan"
-                                        style="color:#409EFF;"></i>
-                                    <i @click="tolike()" v-else class="iconfont icon-dianzan"></i>
-                                </el-col>
-                                <el-col :span="8">
-                                    <i @click="tofavor()" v-if="article_data_info.favor" class="iconfont icon-shoucang"
-                                        style="color:#E6A23C;"></i>
-                                    <i @click="tofavor()" v-else class="iconfont icon-shoucang"></i>
-                                </el-col>
-                                <el-col :span="8">
-                                    <i v-if="article_data_info.dashang" class="iconfont icon-dashang1"
-                                        style="color:#E6A23C;"></i>
-                                    <i v-else class="iconfont icon-dashang1"></i>
-                                </el-col>
-                            </el-row>
+
                         </div>
                         <!-- 最新评论 -->
                         <div class="body ylmty">
@@ -111,7 +121,9 @@ const Adata = {
     title: null,
     content: null,
     next_id: null,
+    next_title: null,
     pre_id: null,
+    pre_title: null,
 }
 const route = useRoute();
 let article_id = route.query.id
@@ -257,7 +269,25 @@ const getArticleData = (id) => {
     margin-top: 70px;
 }
 
+.Updown_buttons {
+    margin-top: 30px;
+}
 
+.Updown_buttons .item {
+    display: flex;
+    align-items: center;
+    padding: 5px 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.Updown_buttons .item p {
+    margin-left: 10px;
+}
+
+.Updown_buttons .item:hover {
+    background-color: #cacaca60;
+}
 
 .ylmty {
     padding: 10px 10px;
@@ -278,16 +308,20 @@ const getArticleData = (id) => {
 }
 
 .likeBtn {
+    width: 150px;
     text-align: center;
+    margin: 30px auto;
 }
 
 .likeBtn i {
     font-size: 30px;
     cursor: pointer;
 }
+
 [v-cloak] {
     display: none !important;
 }
+
 .body.ylmty.plugin-item {
     color: rgb(39, 39, 39);
     font-size: 18px;
