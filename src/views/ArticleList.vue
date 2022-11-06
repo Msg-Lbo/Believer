@@ -1,32 +1,26 @@
 <template>
     <div id="article-list">
         <!-- 面包屑导航 -->
-            <BreadMenu :page_name="'文章列表'"></BreadMenu>
+        <BreadMenu :page_name="'文章列表'"></BreadMenu>
         <!-- 文章列表 -->
         <div class="body ylmty">
-            <el-row>
-                <el-col v-for="item in article_list" :key="item.id" :span="24" class="colcard">
-                    <el-card shadow="hover" class="card">
-                        <el-row style="align-items:center;">
-                            <el-col :xs="24" :lg="4">
-                                <el-image style="width: 200px; height: 100px; margin: 0 auto;" :src="item.cover"
-                                    :fit="'cover'" />
-                            </el-col>
-                            <el-col class="text-item" :xs="24" :lg="10">
-                                <span>{{ item.title }}</span>
-                            </el-col>
-                            <el-col class="text-item" :xs="12" :lg="4">
-                                <span>发布者：{{ item.nickName }}</span>
-                            </el-col>
-                            <el-col class="text-item" :xs="12" :lg="6">
-                                <el-button type="primary" @click="toArticle(item.id)" :icon="Search">查看</el-button>
-                                <el-button type="warning" :icon="Edit">编辑</el-button>
-                                <el-button type="danger" @click="deleteArticle(item.id)" :icon="Delete">删除</el-button>
-                            </el-col>
-                        </el-row>
-                    </el-card>
-                </el-col>
-            </el-row>
+            <el-table :data="article_list" stripe :align="'center'" style="width: 100%;">
+                <el-table-column :align="'center'" label="id" prop="id" width="80" />
+                <el-table-column :align="'center'" label="文章标题" prop="title" />
+                <el-table-column :align="'center'" label="分类" prop="fenlei" />
+                <el-table-column :align="'center'" label="作者" prop="nickName" />
+                <el-table-column :align="'center'" label="发布日期" prop="create_time" />
+                <el-table-column align="right">
+                    <template #default="scope">
+                        <el-button size="small" type="primary" @click="toArticle(scope.$index, scope.row)">查看
+                        </el-button>
+                        <el-button size="small" type="warning" @click="handleEdit(scope.$index, scope.row)">修改
+                        </el-button>
+                        <el-button size="small" type="danger" @click="deleteArticle(scope.$index, scope.row)">删除
+                        </el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
         </div>
         <!-- 分页器 -->
         <div class="pagination ylmty ">
@@ -41,16 +35,16 @@ import BreadMenu from '@/components/Commons/BreadMenu.vue';
 import store from '@/store';
 import { ArrowRight, Search, Delete, Edit } from '@element-plus/icons-vue';
 import axios from 'axios';
-import { onMounted, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import Qs from 'qs';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import router from '@/router';
-import QueryString from 'qs';
+import { json } from 'stream/consumers';
+import { type } from 'os';
 
 let currentpage = ref<number>(1)
-let pagesize = ref<number>(5)
+let pagesize = ref<number>(15)
 let total = ref<number>(100)
-let article_list = ref([])
 onMounted(() => {
     getListData(currentpage.value)
 })
@@ -65,14 +59,28 @@ const getListData = (page) => {
             fenlei: 'all'
         }
     }).then((res) => {
-        // console.log(res)
         article_list.value = res.data.data
+        console.log(article_list.value);
+        
         total.value = res.data.total
     })
 }
 
-const toArticle = (id) => {
-    router.push({ path: '/article', query: { id: id } })
+interface list {
+    id: number
+    date: string
+    title: string
+    create_time: string
+    nickName: string
+}
+// let article_list: list[] = []
+let article_list = ref([])
+const handleEdit = (index: number, row: list) => {
+    console.log(row)
+}
+
+const toArticle = (index: number, row: list) => {
+    router.push({ path: '/article', query: { id: row.id } })
 }
 
 let currnetChange = (val) => {
@@ -82,7 +90,7 @@ let currnetChange = (val) => {
 }
 
 
-const deleteArticle = (id) => {
+const deleteArticle = (index: number, row: list) => {
     ElMessageBox.confirm(
         '当前操作不可逆，请确认是否删除！',
         '警告',
@@ -101,7 +109,7 @@ const deleteArticle = (id) => {
                     url: 'http://127.0.0.1:9000/api/delete-article/',
                     method: 'delete',
                     data: Qs.stringify({
-                        id,
+                        id: row.id,
                         token: store.getters.isnotUserlogin.token
                     }),
                     headers: {

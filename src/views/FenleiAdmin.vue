@@ -300,6 +300,7 @@ onMounted(() => {
 
 // 获取文章
 const getListData = (page, fenlei) => {
+    // console.log(page,fenlei);
     axios({
         url: 'http://127.0.0.1:9000/api/article-list/',
         method: 'get',
@@ -316,10 +317,9 @@ const getListData = (page, fenlei) => {
 }
 
 // 监听分页返回
-let currnetChange = (val, fenlei) => {
-    // console.log(val)
+let currnetChange = (val) => {
     currentpage.value = val
-    getListData(val, fenlei)
+    getListData(val,fenlei_name.value)
 }
 </script>
 

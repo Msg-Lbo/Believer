@@ -30,9 +30,9 @@
             </el-col>
             <el-col :sm="6" class="right">
                 <div class="body ylmty head_card">
-                    <img src="http://q2.qlogo.cn/headimg_dl?dst_uin=24130801&spec=100" alt="">
-                    <h2>Admin</h2>
-                    <p>这个人太懒了，还没有个人简介</p>
+                    <img :src=headimg alt="">
+                    <h2>{{ blogger_name }}</h2>
+                    <p>{{ overview }}</p>
                     <div class="statistics">
                         <span>文章<p>8880</p></span>
                         <span>分类<p>8880</p></span>
@@ -59,7 +59,9 @@
 
 <script lang="ts" setup>
 import router from '@/router';
+import store from '@/store';
 import axios from 'axios';
+import Qs from 'qs';
 import { onMounted, ref } from 'vue';
 
 let currentpage = ref<number>(1)
@@ -69,6 +71,7 @@ let article_list = ref([])
 
 onMounted(() => {
     getListData(currentpage.value)
+    getsettings()
 })
 
 const getListData = (page) => {
@@ -92,8 +95,23 @@ const toArticle = (id) => {
 }
 
 let currnetChange = (val) => {
-    currentpage.value = val
+    // currentpage.value = val
     getListData(val)
+}
+
+
+let headimg = ref<string>()
+let blogger_name = ref<string>()
+let overview = ref<string>()
+const getsettings = () => {
+    axios({
+        url: 'http://127.0.0.1:9000/api/other-settings/',
+        method: 'get'
+    }).then((res) => {
+        headimg.value = res.data.headimg
+        blogger_name.value = res.data.blogger_name
+        overview.value = res.data.overview
+    })
 }
 
 </script>
@@ -177,9 +195,11 @@ let currnetChange = (val) => {
 .demonstration {
     color: var(--el-text-color-secondary);
 }
-.el-carousel{
-    border-radius: .25rem .25rem 0 0 ;
+
+.el-carousel {
+    border-radius: .25rem .25rem 0 0;
 }
+
 .el-carousel__item h3 {
     color: #475669;
     opacity: 0.75;

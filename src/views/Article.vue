@@ -4,7 +4,7 @@
         <!-- 文章内容 -->
         <div class="body ylmty">
             <el-row :gutter="10">
-                <el-col :xs="24" :lg="16">
+                <el-col :xs="24" :lg="18">
                     <div class="body ylmty">
                         <div class="header">
                             {{ article_data.title }}
@@ -74,7 +74,7 @@
 
                 </el-col>
 
-                <el-col :xs="24" :lg="8" class="affix-container">
+                <el-col :xs="24" :lg="6" class="affix-container">
                     <el-affix target=".affix-container" :offset="60">
                         <div class="body ylmty">
                             <el-image :src="article_data.cover" :fit="'cover'" />
@@ -234,6 +234,7 @@ const sendNewcomment = () => {
         }
         if (res.data == 'ok') {
             getAllConmments()
+            comment.value = null
         }
     })
 }
@@ -264,7 +265,7 @@ const getArticleData = (id) => {
 
 <style scoped>
 #root {
-    max-width: 1150px;
+    max-width: 1360px;
     margin: 0 auto;
     margin-top: 70px;
 }

@@ -1,6 +1,5 @@
 <template>
     <div class="test">
-
         <el-row>
             <el-divider />
             <el-col :span="6">
@@ -35,7 +34,7 @@
             <el-col :span="18">
                 <div class="col_body">
                     <el-radio-group v-model="logotype" class="ml-4">
-                        <el-radio label="text" size="large">文字LOGO</el-radio>
+                        <el-radio label="text" size="large" disabled>文字LOGO</el-radio>
                         <el-radio label="img" size="large">图片LOGO</el-radio>
                     </el-radio-group>
                 </div>
@@ -108,7 +107,6 @@ const getsettings = () => {
 }
 onMounted(() => {
     getsettings()
-    tologourlortext()
 })
 
 // let Change = () => {
@@ -128,5 +126,9 @@ onMounted(() => {
     display: flex;
     align-items: flex-start;
     flex-direction: column;
+}
+.col_body p{
+    font-size: 12px;
+    color: #9f9f9f;
 }
 </style>
