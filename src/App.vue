@@ -8,7 +8,7 @@
         <el-menu-item index="/">首页</el-menu-item>
         <el-sub-menu index="1">
           <template #title>分类</template>
-          <el-menu-item index="/other-settings">其他设置</el-menu-item>
+          <el-menu-item index="/classify">其他设置</el-menu-item>
         </el-sub-menu>
         <el-menu-item index="/navigations">导航</el-menu-item>
         <el-menu-item index="/information">资讯</el-menu-item>

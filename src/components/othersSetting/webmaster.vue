@@ -1,7 +1,6 @@
 <template>
     <div id="root">
         <el-row>
-            <el-divider />
             <el-col :span="6">
                 <div class="col_body">
                     <span>博主头像图片</span>
@@ -14,7 +13,6 @@
                     <p>请放入博主头像链接</p>
                 </div>
             </el-col>
-            <el-divider />
             <el-col :span="6">
                 <div class="col_body">
                     <span>博主昵称</span>
@@ -26,7 +24,6 @@
                     <p>请填写博主昵称,若为空则不显示</p>
                 </div>
             </el-col>
-            <el-divider />
             <el-col :span="6">
                 <div class="col_body">
                     <span>博主个人简介</span>
@@ -38,7 +35,6 @@
                     <p>请填写博主个性简介,若为空则不显示</p>
                 </div>
             </el-col>
-            <el-divider />
             <el-col :span="6">
                 <div class="col_body">
                     <span>QQ二维码图片</span>
@@ -50,7 +46,6 @@
                     <p>请上传QQ二维码图片，建议尺寸为300px×300px，若为空则不显示</p>
                 </div>
             </el-col>
-            <el-divider />
             <el-col :span="6">
                 <div class="col_body">
                     <span>微信二维码图片</span>
@@ -62,7 +57,6 @@
                     <p>请上传微信二维码图片，建议尺寸为300px×300px，若为空则不显示</p>
                 </div>
             </el-col>
-            <el-divider />
         </el-row>
     </div>
 </template>

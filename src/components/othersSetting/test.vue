@@ -1,7 +1,6 @@
 <template>
     <div class="test">
         <el-row>
-            <el-divider />
             <el-col :span="6">
                 <div class="col_body">
                     <span>允许注册</span>
@@ -13,7 +12,6 @@
                     <p>是否开放站点注册权限</p>
                 </div>
             </el-col>
-            <el-divider />
             <el-col :span="6">
                 <div class="col_body">
                     <span>站点标题</span>
@@ -25,7 +23,6 @@
                     <p>请填入站点标题,不要太长(刷新后生效)</p>
                 </div>
             </el-col>
-            <el-divider />
             <el-col :span="6">
                 <div class="col_body">
                     <span>站点Logo类型</span>
@@ -39,7 +36,6 @@
                     </el-radio-group>
                 </div>
             </el-col>
-            <el-divider />
             <el-col :span="6" v-if="logotype == 'text'">
                 <div class="col_body">
                     <span>站点文字LOGO</span>
@@ -63,7 +59,6 @@
                     <p>请填入文字LOGO</p>
                 </div>
             </el-col>
-            <el-divider />
         </el-row>
     </div>
 
