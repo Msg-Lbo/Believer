@@ -55,7 +55,7 @@
                                                     <el-button type="warning" :icon="Plus">移动
                                                     </el-button>
                                                 </template>
-                                                <el-tree :data="fenlei_tree" @node-click="choosed_fenlei"
+                                                <el-tree :data="fenlei_tree" show-checkbox @node-click="choosed_fenlei"
                                                     default-expand-all :expand-on-click-node="false" :hide-after="0" />
                                                 <el-button type="success" size="default"
                                                     @click="saveArticleToFenlei(item.id)" :icon="Plus">确定</el-button>
@@ -204,7 +204,7 @@ const getFenleiTree = () => {
             ElMessage.warning('无分类数据')
             return
         }
-        fenlei_tree.value = res.data
+        fenlei_tree.value = res.data.fenlei_data
     })
 }
 

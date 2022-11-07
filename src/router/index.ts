@@ -29,37 +29,32 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import(/* webpackChunkName: "about" */ '../views/LoginRegister.vue')
   },
   {
-    path: '/information',
-    name: 'Information',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Information.vue'),
-  },
-  {
     path: '/:catchAll(.*)',/*正则判断找不到的页面*/
     name: '/404',
     component: () => import(/* webpackChunkName: "about" */ '../views/404.vue')
   },
   // 其他设置
-  {
-    path: '/other-settings',
-    name: '/OtherSettings',
-    component: () => import('../views/OtherSettings.vue'),
-    beforeEnter: (to, from, next) => {
-      if (store.state.userinfo.token) {
-        //判断用户权限
-        let checkInfo = {
-          contentType: 'auth_user',
-          permissions: ['add', 'change', 'delete', 'view']
-        }
-        store.dispatch("checkUserPerm", checkInfo).then((res)=>{
-          if (res) {
-            next()
-          }
-        })
-      } else {
-        next('/login')
-      }
-    }
-  },
+  // {
+  //   path: '/other-settings',
+  //   name: '/OtherSettings',
+  //   component: () => import('../views/OtherSettings.vue'),
+  //   beforeEnter: (to, from, next) => {
+  //     if (store.state.userinfo.token) {
+  //       //判断用户权限
+  //       let checkInfo = {
+  //         contentType: 'auth_user',
+  //         permissions: ['add', 'change', 'delete', 'view']
+  //       }
+  //       store.dispatch("checkUserPerm", checkInfo).then((res)=>{
+  //         if (res) {
+  //           next()
+  //         }
+  //       })
+  //     } else {
+  //       next('/login')
+  //     }
+  //   }
+  // },
   //添加文章
   {
     path: '/add-Article',

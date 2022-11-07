@@ -8,15 +8,14 @@
         <el-menu-item index="/">首页</el-menu-item>
         <el-sub-menu index="1">
           <template #title>分类</template>
-          <el-menu-item index="/classify">其他设置</el-menu-item>
+          <el-tree :data="fenlei_tree"  default-expand-all :expand-on-click-node="false"
+            :hide-after="0" />
         </el-sub-menu>
         <el-menu-item index="/navigations">导航</el-menu-item>
-        <el-menu-item index="/information">资讯</el-menu-item>
-        <!-- <el-menu-item index="/goods">资源</el-menu-item> -->
         <el-menu-item index="/about">关于</el-menu-item>
         <el-sub-menu index="2" v-if="authlogin.token">
           <template #title>控制台</template>
-          <el-menu-item index="/other-settings">其他设置</el-menu-item>
+          <!-- <el-menu-item index="/other-settings">其他设置</el-menu-item> -->
           <el-menu-item index="/add-article">添加文章</el-menu-item>
           <el-menu-item index="/article-list">文章列表</el-menu-item>
           <el-menu-item index="/fenlei-admin">分类管理</el-menu-item>
@@ -66,14 +65,37 @@ import router from '@/router';
 import { watch, computed, ref, onMounted } from 'vue';
 import store from './store';
 import axios from 'axios';
+import { ElMessage } from 'element-plus';
 
 let icoimg = ref()
-let weblogo = ref()
+let weblogo = ref('https://www.ylmty.cc/usr/uploads/2022/10/1533468272.png')
+interface Tree {
+  id: number
+  label: string
+  children?: Tree[]
+}
+
+let fenlei_tree = ref<Tree[]>([])
+// 获取分类结构
+const getFenleiTree = () => {
+  axios({
+    url: 'http://127.0.0.1:9000/api/ylmty-fenlei/',
+    method: 'get'
+  }).then((res) => {
+    // console.log(res.data)
+    if (res.data == 'null') {
+      ElMessage.warning('无分类数据')
+      return
+    }
+    fenlei_tree.value = res.data.fenlei_data
+  })
+}
+
+
+
 let authlogin = computed(() => {
   return store.getters.isnotUserlogin
 })
-
-
 // 监听token
 watch(() => authlogin.value.token, (newVal) => {
   if (newVal == '') {
@@ -90,19 +112,11 @@ const isheadimg = () => {
     icoimg.value = localStorage.getItem('headImg')
   }
 }
-const getsettings = () => {
-  axios({
-    url: 'http://127.0.0.1:9000/api/other-settings/',
-    method: 'get'
-  }).then((res) => {
-    document.title = res.data.webt
-    weblogo.value = res.data.wlg
-  })
-}
+
 onMounted(() => {
   store.dispatch('TryAoutLogin')
   isheadimg()
-  getsettings()
+  getFenleiTree()
 })
 
 

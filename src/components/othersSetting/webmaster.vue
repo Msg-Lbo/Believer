@@ -9,7 +9,7 @@
             <el-col :span="18">
                 <div class="col_body">
                     <el-image style="width: 100px; height: 100px" :src="headimg" :fit="'scale-down'" />
-                    <el-input v-model="headimg" placeholder="Please input" />
+                    <el-input v-model="headimg" @change="change" placeholder="Please input" />
                     <p>请放入博主头像链接</p>
                 </div>
             </el-col>
@@ -20,7 +20,7 @@
             </el-col>
             <el-col :span="18">
                 <div class="col_body">
-                    <el-input v-model="blogger_name" placeholder="Please input" />
+                    <el-input v-model="blogger_name" @change="change" placeholder="Please input" />
                     <p>请填写博主昵称,若为空则不显示</p>
                 </div>
             </el-col>
@@ -31,7 +31,7 @@
             </el-col>
             <el-col :span="18">
                 <div class="col_body">
-                    <el-input v-model="overview" placeholder="Please input" />
+                    <el-input v-model="overview" @change="change" placeholder="Please input" />
                     <p>请填写博主个性简介,若为空则不显示</p>
                 </div>
             </el-col>
@@ -42,7 +42,7 @@
             </el-col>
             <el-col :span="18">
                 <div class="col_body">
-                    <el-input v-model="headimg" placeholder="Please input" />
+                    <el-input v-model="headimg" @change="change" placeholder="Please input" />
                     <p>请上传QQ二维码图片，建议尺寸为300px×300px，若为空则不显示</p>
                 </div>
             </el-col>
@@ -53,7 +53,7 @@
             </el-col>
             <el-col :span="18">
                 <div class="col_body">
-                    <el-input v-model="headimg" placeholder="Please input" />
+                    <el-input v-model="headimg" @change="change" placeholder="Please input" />
                     <p>请上传微信二维码图片，建议尺寸为300px×300px，若为空则不显示</p>
                 </div>
             </el-col>
@@ -68,6 +68,14 @@ import { onMounted, ref } from 'vue';
 let headimg = ref<string>()
 let blogger_name = ref<string>()
 let overview = ref<string>()
+
+const emits = defineEmits(["headimg", "blogger_name", "overview"]);
+const change = () => {
+    emits('headimg', headimg.value)
+    emits('blogger_name', blogger_name.value)
+    emits('overview', overview.value)
+}
+
 
 const getsettings = () => {
     axios({
@@ -92,12 +100,13 @@ onMounted(() => {
     align-items: flex-start;
     flex-direction: column;
 }
-.col_body p{
+
+.col_body p {
     font-size: 12px;
     color: #9f9f9f;
 }
 
-.col_body input{
+.col_body input {
     width: 300px;
 }
 </style>

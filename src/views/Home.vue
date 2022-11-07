@@ -4,8 +4,13 @@
             <el-col :xs="24" :sm="18">
                 <div class="ylmty body">
                     <el-carousel trigger="click" height="150px">
-                        <el-carousel-item v-for="item in 4" :key="item">
-                            <h3 class="small justify-center" text="2xl">{{ item }}</h3>
+                        <el-carousel-item v-for="item in article_list" :key="item.id">
+                            <div class="small justify-center" @click="toArticle(item.id)" style="position: relative;">
+                                <el-image style="height:150px;display:block;border-radius: .25rem 0 0 .25rem;"
+                                    :src="item.cover" :fit="'cover'" />
+                                <span
+                                    style="position: absolute; top: 80%;left:50%; transform:translate(-50%,-50%); color: #fff; font-size: 20px;">{{ item.title }}</span>
+                            </div>
                         </el-carousel-item>
                     </el-carousel>
                     <el-scrollbar height="70vh">
@@ -34,8 +39,8 @@
                     <h2>{{ blogger_name }}</h2>
                     <p>{{ overview }}</p>
                     <div class="statistics">
-                        <span>文章<p>8880</p></span>
-                        <span>分类<p>8880</p></span>
+                        <span>文章<p>{{ total }}</p></span>
+                        <span>分类<p>{{ fenlei_len }}</p></span>
                         <span>标签<p>8880</p></span>
                     </div>
                 </div>
@@ -61,6 +66,7 @@
 import router from '@/router';
 import store from '@/store';
 import axios from 'axios';
+import { ElMessage } from 'element-plus';
 import Qs from 'qs';
 import { onMounted, ref } from 'vue';
 
@@ -70,6 +76,7 @@ let total = ref<number>(100)
 let article_list = ref([])
 
 onMounted(() => {
+    getFenleiTree()
     getListData(currentpage.value)
     getsettings()
 })
@@ -103,6 +110,7 @@ let currnetChange = (val) => {
 let headimg = ref<string>()
 let blogger_name = ref<string>()
 let overview = ref<string>()
+let fenlei_len = ref<number>()
 const getsettings = () => {
     axios({
         url: 'http://127.0.0.1:9000/api/other-settings/',
@@ -111,6 +119,20 @@ const getsettings = () => {
         headimg.value = res.data.headimg
         blogger_name.value = res.data.blogger_name
         overview.value = res.data.overview
+    })
+}
+
+const getFenleiTree = () => {
+    axios({
+        url: 'http://127.0.0.1:9000/api/ylmty-fenlei/',
+        method: 'get'
+    }).then((res) => {
+        // console.log(res.data)
+        if (res.data == 'null') {
+            ElMessage.warning('无分类数据')
+            return
+        }
+        fenlei_len.value = res.data.fenlei_len
     })
 }
 

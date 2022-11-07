@@ -9,7 +9,7 @@
                     <test @reg="reg" @webtitle="wbt" @textorimg="wlg"></test>
                 </el-tab-pane>
                 <el-tab-pane label="博主信息">
-                    <Webmaster style="margin-top: 0;"></Webmaster>
+                    <Webmaster @headimg="headimg" @blogger_name="blogger_name" @overview="overview" style="margin-top: 0;"></Webmaster>
                 </el-tab-pane>
                 <el-tab-pane label="Role">Role</el-tab-pane>
                 <el-tab-pane label="Task">Task</el-tab-pane>
@@ -33,10 +33,16 @@ import Webmaster from '@/components/othersSetting/webmaster.vue';
 let app_reg = ref()
 let webtitle = ref()
 let weblogo = ref()
+let head_img = ref()
+let bloggername = ref()
+let over_view = ref()
 // 子组件传过来的
 const reg = (n) => { app_reg.value = n }
 const wbt = (n) => { webtitle.value = n }
 const wlg = (n) => { weblogo.value = n }
+const headimg = (n) => { head_img.value = n }
+const blogger_name = (n) => { bloggername.value = n }
+const overview = (n) => { over_view.value = n }
 
 const saveSettings = () => {
     axios({
@@ -47,6 +53,9 @@ const saveSettings = () => {
             dontreg: app_reg.value,
             webtitle: webtitle.value,
             weblogo: weblogo.value,
+            headimg: head_img.value,
+            blogger_name: bloggername.value,
+            overview: over_view.value
         })
     }).then((res) => {
         if (res.data == 'nologin') {
@@ -63,17 +72,6 @@ const saveSettings = () => {
         }
     })
 }
-// const getsettings = () => {
-//     axios({
-//         url: 'http://127.0.0.1:9000/api/other-settings/',
-//         method: 'get'
-//     }).then((res) => {
-//         app_reg.value = res.data.isreg
-//         webtitle.value = res.data.wbt
-//         weblogo.value = res.data.wlg
-//     })
-// }
-
 onMounted(() => {
     // getsettings()
 })
