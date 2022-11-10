@@ -1,97 +1,64 @@
 <template>
-    <div id="root" v-cloak>
-        <BreadMenu :page_name="article_data.title" :fenlei="article_data.fenlei"></BreadMenu>
+    <div id="root">
+        <BreadMenu :page_name="article_data.title" :fenlei="article_data.fenlei" style="margin: 10px 30px;"></BreadMenu>
         <!-- 文章内容 -->
-        <div class="body ylmty">
-            <el-row :gutter="10">
-                <el-col :xs="24" :lg="18">
-                    <div class="body ylmty">
-                        <div class="header">
-                            {{ article_data.title }}
-                        </div>
-                        <div class="body">
-                            {{ article_data.describe }}
-                        </div>
-                        <div class="article_content">
-                            <v-md-preview-html :html="article_data.content" preview-class="vuepress-markdown-body">
-                            </v-md-preview-html>
-                            <div class="Updown_buttons">
-                                <div class="item">
-                                    <el-button @click="toOtherPage(article_data.pre_id)" size="small" type="primary">
-                                        上一篇
-                                    </el-button>
-                                    <p v-if="toNumber(article_data.pre_id) == 0">没有了</p>
-                                    <p v-else>{{ article_data.pre_title }}</p>
-                                </div>
-                                <el-divider />
-                                <div class="item">
-                                    <el-button @click="toOtherPage(article_data.next_id)" size="small" type="primary">
-                                        下一篇
-                                    </el-button>
-                                    <p v-if="toNumber(article_data.next_id) == 0">没有了</p>
-                                    <p v-else>{{ article_data.next_title }}</p>
-                                </div>
-                            </div>
-                            <!-- 点赞收藏打赏 -->
-                            <div class="likeBtn">
-                                <el-row>
-                                    <el-col :span="8">
-                                        <i @click="tolike()" v-if="article_data_info.like" class="iconfont icon-dianzan"
-                                            style="color:#409EFF;"></i>
-                                        <i @click="tolike()" v-else class="iconfont icon-dianzan"></i>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <i @click="tofavor()" v-if="article_data_info.favor"
-                                            class="iconfont icon-shoucang" style="color:#E6A23C;"></i>
-                                        <i @click="tofavor()" v-else class="iconfont icon-shoucang"></i>
-                                    </el-col>
-                                    <el-col :span="8">
-                                        <i v-if="article_data_info.dashang" class="iconfont icon-dashang1"
-                                            style="color:#E6A23C;"></i>
-                                        <i v-else class="iconfont icon-dashang1"></i>
-                                    </el-col>
-                                </el-row>
-                            </div>
-                        </div>
-                        <div class="comments_box">
-                            <h1>评论区<span v-if="comments_data == 0">(暂无评论)</span>:</h1>
-                            <el-input v-model="comment" :rows="6" type="textarea" placeholder="Please input" />
-                            <el-button @click="sendNewcomment()" type="primary" style="margin-top: 10px;">提交评论</el-button>
-                            <div v-if="comments_data != 0" class="body ylmty">
-                                <el-scrollbar height="400">
-                                    <div class="scrollbar-demo-item" v-for="(item, index) in comments_data"
-                                        :key="index">
-                                        <span>{{ item.nickName }} 说：</span>
-                                        <el-divider />
-                                        <p>{{ item.comment }}</p>
-                                    </div>
-                                </el-scrollbar>
-                            </div>
-                        </div>
+        <div class="body ylmty" style="margin: 10px 30px;">
+            <div class="header">
+                {{ article_data.title }}
+            </div>
+            <div class="body">
+                {{ article_data.describe }}
+            </div>
+            <div class="article_content">
+                <v-md-preview-html :html="article_data.content" preview-class="vuepress-markdown-body">
+                </v-md-preview-html>
+                <div class="Updown_buttons">
+                    <div class="item">
+                        <el-button @click="toOtherPage(article_data.pre_id)" size="small" type="primary">
+                            上一篇
+                        </el-button>
+                        <p v-if="toNumber(article_data.pre_id) == 0">没有了</p>
+                        <p v-else>{{ article_data.pre_title }}</p>
                     </div>
-
-
-
-                </el-col>
-
-                <el-col :xs="24" :lg="6" class="affix-container">
-                    <el-affix target=".affix-container" :offset="60">
-                        <div class="body ylmty">
-                            <el-image :src="article_data.cover" :fit="'cover'" />
-
+                    <el-divider />
+                    <div class="item">
+                        <el-button @click="toOtherPage(article_data.next_id)" size="small" type="primary">
+                            下一篇
+                        </el-button>
+                        <p v-if="toNumber(article_data.next_id) == 0">没有了</p>
+                        <p v-else>{{ article_data.next_title }}</p>
+                    </div>
+                </div>
+                <!-- 点赞收藏打赏 -->
+                <div class="likeBtn">
+                    <el-row>
+                        <el-col :span="12">
+                            <i @click="tolike()" v-if="article_data_info.like" class="iconfont icon-dianzan"
+                                style="color:#409EFF;"></i>
+                            <i @click="tolike()" v-else class="iconfont icon-dianzan"></i>
+                        </el-col>
+                        <el-col :span="12">
+                            <i v-if="article_data_info.dashang" class="iconfont icon-dashang1"
+                                style="color:#E6A23C;"></i>
+                            <i v-else class="iconfont icon-dashang1"></i>
+                        </el-col>
+                    </el-row>
+                </div>
+            </div>
+            <div class="comments_box">
+                <h1>评论区<span v-if="comments_data == 0">(暂无评论)</span>:</h1>
+                <el-input v-model="comment" :rows="6" type="textarea" placeholder="Please input" />
+                <el-button @click="sendNewcomment()" type="primary" style="margin-top: 10px;">提交评论</el-button>
+                <div v-if="comments_data != 0" class="body ylmty">
+                    <el-scrollbar height="400">
+                        <div class="scrollbar-demo-item" v-for="(item, index) in comments_data" :key="index">
+                            <span>{{ item.nickName }} 说：</span>
+                            <el-divider />
+                            <p>{{ item.comment }}</p>
                         </div>
-                        <!-- 最新评论 -->
-                        <div class="body ylmty">
-                            <h3>最新评论</h3>
-                            <div class="body ylmty plugin-item">
-                                Admin 说：
-                                <el-divider></el-divider>
-                                哈哈哈
-                            </div>
-                        </div>
-                    </el-affix>
-                </el-col>
-            </el-row>
+                    </el-scrollbar>
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -144,25 +111,6 @@ watch(() => route.query, (to) => {
 const tolike = () => {
     axios({
         url: 'http://127.0.0.1:9000/api/article-like/',
-        method: 'post',
-        data: Qs.stringify({
-            token: store.getters.isnotUserlogin.token,
-            article_id: article_id
-        })
-    }).then((res) => {
-        if (res.data == 'nologin') {
-            ElMessage.warning('登录之后才能点赞哦.')
-            return
-        }
-        if (res.data == 'ok') {
-            gerUserArticleInfo()
-        }
-    })
-}
-// 收藏
-const tofavor = () => {
-    axios({
-        url: 'http://127.0.0.1:9000/api/article-favor/',
         method: 'post',
         data: Qs.stringify({
             token: store.getters.isnotUserlogin.token,
@@ -264,12 +212,6 @@ const getArticleData = (id) => {
 </script>
 
 <style scoped>
-#root {
-    max-width: 1360px;
-    margin: 0 auto;
-    margin-top: 70px;
-}
-
 .Updown_buttons {
     margin-top: 30px;
 }
@@ -288,10 +230,6 @@ const getArticleData = (id) => {
 
 .Updown_buttons .item:hover {
     background-color: #cacaca60;
-}
-
-.ylmty {
-    padding: 10px 10px;
 }
 
 .body.ylmty .header {
@@ -317,10 +255,6 @@ const getArticleData = (id) => {
 .likeBtn i {
     font-size: 30px;
     cursor: pointer;
-}
-
-[v-cloak] {
-    display: none !important;
 }
 
 .body.ylmty.plugin-item {

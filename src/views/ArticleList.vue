@@ -1,16 +1,25 @@
 <template>
-    <div id="article-list">
+    <div id="root">
         <!-- 面包屑导航 -->
         <BreadMenu :page_name="'文章列表'"></BreadMenu>
+        <!-- 置顶文章 -->
+        <div class="top">
+            <span>填入置顶文章ID,用英文逗号隔开 ","</span>
+            <el-input v-model="top_array" placeholder="Please input">
+                <template #append>
+                    <el-button @click="sub_top_array">Primary</el-button>
+                </template>
+            </el-input>
+        </div>
         <!-- 文章列表 -->
-        <div class="body ylmty">
-            <el-table :data="article_list" stripe :align="'center'" style="width: 100%;">
-                <el-table-column :align="'center'" label="id" prop="id" width="80" />
-                <el-table-column :align="'center'" label="文章标题" prop="title" />
-                <el-table-column :align="'center'" label="分类" prop="fenlei" />
-                <el-table-column :align="'center'" label="作者" prop="nickName" />
-                <el-table-column :align="'center'" label="发布日期" prop="create_time" />
-                <el-table-column align="right">
+        <div class="table">
+            <el-table :data="article_list" stripe :align="'center'" :default-sort="{ prop: 'id', order: 'ascending' }"
+                style="width: 100%;" row-key="id">
+                <el-table-column align="center" label="ID" prop="id" sortable width="80" />
+                <el-table-column align="center" label="文章标题" prop="title" />
+                <el-table-column align="center" label="分类" prop="fenlei" />
+                <el-table-column align="center" label="发布日期" sortable prop="create_time" />
+                <el-table-column align="center" label="操作">
                     <template #default="scope">
                         <el-button size="small" type="primary" @click="toArticle(scope.$index, scope.row)">查看
                         </el-button>
@@ -23,7 +32,7 @@
             </el-table>
         </div>
         <!-- 分页器 -->
-        <div class="pagination ylmty ">
+        <div class="pagination">
             <el-pagination background layout="total,prev, pager, next" :total="total" :page-size="pagesize"
                 @current-change="currnetChange" />
         </div>
@@ -33,21 +42,34 @@
 <script lang="ts" setup>
 import BreadMenu from '@/components/Commons/BreadMenu.vue';
 import store from '@/store';
-import { ArrowRight, Search, Delete, Edit } from '@element-plus/icons-vue';
 import axios from 'axios';
 import { computed, onMounted, reactive, ref } from 'vue';
 import Qs from 'qs';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import router from '@/router';
-import { json } from 'stream/consumers';
-import { type } from 'os';
 
 let currentpage = ref<number>(1)
-let pagesize = ref<number>(15)
-let total = ref<number>(100)
+let pagesize = ref<number>(10)
+let total = ref<number>()
+let top_array = ref([])
 onMounted(() => {
     getListData(currentpage.value)
 })
+
+const sub_top_array = () => {
+    axios({
+        url: 'http://127.0.0.1:9000/api/article-list/',
+        method: 'post',
+        data: Qs.stringify({
+            topArray: top_array.value,
+            token: store.getters.isnotUserlogin.token
+        })
+    }).then((res) => {
+        if (res.data == 'ok') {
+            ElMessage.success('修改成功')
+        }
+    })
+}
 
 const getListData = (page) => {
     axios({
@@ -60,8 +82,10 @@ const getListData = (page) => {
         }
     }).then((res) => {
         article_list.value = res.data.data
-        console.log(article_list.value);
-        
+        article_list.value.push.apply(res.data.data, res.data.top)
+        res.data.top.forEach((item) => {
+            top_array.value.push(item["id"])
+        })
         total.value = res.data.total
     })
 }
@@ -151,30 +175,22 @@ const deleteArticle = (index: number, row: list) => {
 </script>
 
 <style scoped>
-#article-list {
-    max-width: 1366px;
-    margin: 0 auto;
-    margin-top: 70px;
+.pagination {
+    margin: 10px 30px;
 }
 
-.ylmty {
-    padding: 10px 10px;
+span {
+    display: block;
+    color: #909399;
+    margin-bottom: 5px;
 }
 
-.el-row .colcard {
-    margin-top: 5px;
+.top {
+    margin: 10px 30px;
 }
 
-.card .text-item {
-    height: 80px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#article-list .pagination {
-    padding: 10px 10px;
-    margin: 0 auto;
-    margin-top: 10px;
+.table {
+    margin: 10px 30px;
+    border: 1px solid #90939960;
 }
 </style>

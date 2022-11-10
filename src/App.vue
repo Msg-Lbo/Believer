@@ -1,96 +1,36 @@
 <template>
-  <div id="app">
-    <div class="top-menu">
-      <el-menu default-active="/" class="el-menu-demo" mode="horizontal" text-color="#999" router>
-        <a href="/" class="weblogo">
-          <img :src="weblogo" alt="" height="58">
-        </a>
-        <el-menu-item index="/">首页</el-menu-item>
-        <el-sub-menu index="1">
-          <template #title>分类</template>
-          <el-tree :data="fenlei_tree"  default-expand-all :expand-on-click-node="false"
-            :hide-after="0" />
-        </el-sub-menu>
-        <el-menu-item index="/navigations">导航</el-menu-item>
-        <el-menu-item index="/about">关于</el-menu-item>
-        <el-sub-menu index="2" v-if="authlogin.token">
-          <template #title>控制台</template>
-          <!-- <el-menu-item index="/other-settings">其他设置</el-menu-item> -->
-          <el-menu-item index="/add-article">添加文章</el-menu-item>
-          <el-menu-item index="/article-list">文章列表</el-menu-item>
-          <el-menu-item index="/fenlei-admin">分类管理</el-menu-item>
-          <el-menu-item index="/user-permission">用户管理</el-menu-item>
-        </el-sub-menu>
-        <div class="headLoginBox">
-          <el-input placeholder="Please input" class="input-with-select">
-            <template #append>
-              <el-button :icon="Search" />
-            </template>
-          </el-input>
-          <el-divider direction="vertical" />
-
-          <div class="block">
-            <!-- <el-button  type="primary" class="btn-Login">登录</el-button> -->
-            <el-avatar :size="45">
-              <el-dropdown ref="dropdown1" @command="handleCommand">
-                <el-button @click="showClick" style="height: 50px">
-                  <el-avatar :size="45" v-if="icoimg" :src="icoimg"></el-avatar>
-                  <el-avatar :size="45" v-else :icon="UserFilled"></el-avatar>
-                </el-button>
-                <template #dropdown>
-                  <el-dropdown-menu>
-                    <el-dropdown-item v-if="!authlogin.token" command="tologin">登录</el-dropdown-item>
-                    <el-dropdown-item v-if="authlogin.token" command="user">个人中心</el-dropdown-item>
-                    <el-dropdown-item v-if="authlogin.token" command="logout">退出登录</el-dropdown-item>
-                  </el-dropdown-menu>
-                </template>
-              </el-dropdown>
-            </el-avatar>
-          </div>
-        </div>
-      </el-menu>
-
-
+  <div class="header">
+    <div class="header-title"><a href="/">买四个🥕萝卜</a></div>
+    <div class="header-menu">
+      <router-link to="/">首页</router-link><span class="_drop"></span>
+      <a href="https://pan.ylmty.cc/" target="_blank">网盘</a><span class="_drop"></span>
+      <router-link to="/navigations">导航</router-link><span class="_drop"></span>
+      <router-link to="/about">关于</router-link><span class="_drop"></span>
+      <router-link to="/login" v-if="!authlogin.token">登录</router-link>
+      <a v-else @click="logout" style="cursor:pointer;">退出</a>
     </div>
-    <div id="content">
-      <router-view></router-view>
+    <div class="header-menu" v-if="authlogin.isadmin && authlogin.token">
+      <router-link to="/add-article">添加</router-link><span class="_drop"></span>
+      <router-link to="/article-list">列表</router-link><span class="_drop"></span>
+      <router-link to="/fenlei-admin">分类</router-link><span class="_drop"></span>
+      <router-link to="/user-permission">用户</router-link>
     </div>
+    <footerVue></footerVue>
+  </div>
+
+  <div class="main">
+    <router-view></router-view>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { Search, UserFilled } from '@element-plus/icons-vue'
+import footerVue from './components/Commons/footer.vue';
 import router from '@/router';
 
 import { watch, computed, ref, onMounted } from 'vue';
 import store from './store';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-
-let icoimg = ref()
-let weblogo = ref('https://www.ylmty.cc/usr/uploads/2022/10/1533468272.png')
-interface Tree {
-  id: number
-  label: string
-  children?: Tree[]
-}
-
-let fenlei_tree = ref<Tree[]>([])
-// 获取分类结构
-const getFenleiTree = () => {
-  axios({
-    url: 'http://127.0.0.1:9000/api/ylmty-fenlei/',
-    method: 'get'
-  }).then((res) => {
-    // console.log(res.data)
-    if (res.data == 'null') {
-      ElMessage.warning('无分类数据')
-      return
-    }
-    fenlei_tree.value = res.data.fenlei_data
-  })
-}
-
 
 
 let authlogin = computed(() => {
@@ -103,98 +43,109 @@ watch(() => authlogin.value.token, (newVal) => {
   }
 })
 
-const isheadimg = () => {
-  if (localStorage.getItem('token') == 'null') {
-    icoimg.value = 'null'
-  } else if (localStorage.getItem('headImg') == 'null') {
-    icoimg.value = 'https://file.moetu.org/images/2020/07/10/title908f2ba122496aa2.png'
-  } else {
-    icoimg.value = localStorage.getItem('headImg')
-  }
-}
-
 onMounted(() => {
   store.dispatch('TryAoutLogin')
-  isheadimg()
-  getFenleiTree()
 })
-
-
-
-// 鼠标放入头像范围的操作
-const dropdown1 = ref()
-const showClick = () => {
-  dropdown1.value.handleOpen()
-}
-// 鼠标点击头像下拉菜单的操作
-const handleCommand = (command: string | number | object) => {
-  if (command == 'tologin') { // 登录
-    router.push({ path: '/login' })
-  }
-  if (command == 'user') { // 用户中心
-    console.log()
-  }
-  if (command == 'logout') { // 登出
-    icoimg.value = ''
-    store.dispatch('webLogout', store.getters.isnotUserlogin.token)
-  }
+const logout = () => {
+  store.dispatch('webLogout', store.getters.isnotUserlogin.token)
 }
 
 </script>
 <style scoped>
-html,
-body {
-  width: 100vh;
-}
-
-.block {
-  flex: 1;
-}
-
-#content {
-  margin-top: 58px !important;
-}
-
-.top-menu {
-  position: fixed;
-  top: 0;
-  z-index: 999;
-  width: 100%;
-}
-
-.weblogo {
-  margin-right: 20px;
-  height: 58px;
+.header {
+  color: #fff;
   text-align: center;
+  margin-bottom: 30px;
+  position: fixed;
+  width: 30%;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-image: url(./assets/img/bg2.jpg);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  background-size: cover;
+  z-index: 3;
 }
 
-.headLoginBox {
-  margin-left: auto;
-  height: 58px;
+.header::before {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  background: #1b2338c9;
+}
+
+.header-title {
+  flex-wrap: nowrap;
   display: flex;
-  justify-content: flex-end;
   align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 50px;
+  font-size: 22px;
 }
 
-.btn-Login {
-  width: 80px;
+.header-title a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 40px;
 }
 
-/* 自定义 */
-.el-menu {
-  border: none;
-  box-shadow: 0px 4px 8px 0px rgba(50, 50, 50, 0.2);
-  padding: 0 3%;
-  background-color: #ffffff60;
-  backdrop-filter: blur(8px);
+.header-menu {
+  margin-top: 20px;
+  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  flex-wrap: wrap;
 }
 
-.el-menu-item {
-  font-weight: bold;
+.header-menu a {
+  color: #eff1fac9;
+  text-decoration: none;
+  font-weight: normal;
+  padding: 5px 10px;
+  white-space: nowrap;
 }
 
-.el-divider {
-  border-width: 3px;
-  margin: 0 30px;
+
+
+
+.main {
+  height: 100%;
+  background: rgb(216, 216, 216);
+  margin-left: 30%;
+}
+
+@media (max-width: 768px) {
+
+  #root {
+    min-height: 100%;
+  }
+
+  .header {
+    display: block;
+    position: sticky;
+    width: 100%;
+    margin-bottom: 0;
+    padding: 20px 0;
+  }
+
+  .header-title {
+    flex-wrap: nowrap;
+    margin-bottom: 5px;
+    margin-top: 0;
+  }
+
+  .main {
+    min-height: initial;
+    display: block;
+    margin-left: 0;
+  }
 }
 </style>

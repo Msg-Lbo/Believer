@@ -30,7 +30,8 @@ import '@kangc/v-md-editor/lib/plugins/tip/tip.css';
 // 编辑器快捷复制代码插件
 import createCopyCodePlugin from '@kangc/v-md-editor/lib/plugins/copy-code/index';
 import '@kangc/v-md-editor/lib/plugins/copy-code/copy-code.css';;
-
+// 统计
+import '@/assets/js/count.js'
 // VMdEditor.use(githubTheme, {
 //   Hljs: hljs,
 // });

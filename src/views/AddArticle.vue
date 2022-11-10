@@ -1,5 +1,5 @@
 <template>
-    <div id="add-article">
+    <div id="root">
         <BreadMenu :page_name="'添加文章'"></BreadMenu>
         <el-row :gutter="20">
             <el-col :span="10">
@@ -25,7 +25,7 @@
             <el-col :span="24">
                 <div class="continue body ylmty">
                     <v-md-editor @change="onchange" @upload-image="handleUploadImage" @save="saveArticle"
-                        :left-toolbar=lefttoolbar :toolbar="toolbar" :disabled-menus="[]" height="700px"></v-md-editor>
+                        :left-toolbar=lefttoolbar :toolbar="toolbar" :disabled-menus="[]" height="600px"></v-md-editor>
                 </div>
             </el-col>
         </el-row>
@@ -140,15 +140,10 @@ const handleUploadImage = (event, insertImage, files) => {
 </script>
 
 <style scoped>
-#add-article {
-    max-width: 1366px;
-    margin: 0 auto;
-    margin-top: 70px;
-    height: 100vh;
-}
 
 .ylmty {
     padding: 10px 10px;
+    margin: 10px 30px;
 }
 
 #add-article .continue {
@@ -158,10 +153,6 @@ const handleUploadImage = (event, insertImage, files) => {
     align-items: center;
     justify-content: center;
 }
-
-/* .el-form-item{
-    margin-top: 22px;
-} */
 .uploadImg{
     display: flex;
     flex-direction: column-reverse;

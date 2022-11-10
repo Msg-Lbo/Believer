@@ -1,81 +1,78 @@
 <template>
     <div id="root">
         <!-- 面包屑导航 -->
-        <BreadMenu :page_name="'分类管理'"></BreadMenu>
+        <BreadMenu :page_name="'分类管理'" style="margin:10px 30px;"></BreadMenu>
 
         <!-- 主体 -->
-        <div class="body ylmty">
-            <el-row :gutter="10">
-                <el-col :span="7">
-                    <div class="ylmty" style="height:720px;">
-                        <h5 style="font-size:25px;">分类结构</h5>
-                        <el-divider />
-                        <div style="display:flex; margin-bottom: 10px;">
-                            <el-input v-model="New_fenlei_name" placeholder="新分类名字" />
-                            <el-button @click="pushFenleiList()" type="success">保存</el-button>
-                        </div>
-                        <el-row>
-                            <el-col>
-                                <el-tree :data="fenlei_tree" draggable default-expand-all node-key="id"
-                                    :render-content="renderContent" :expand-on-click-node="false"
-                                    @node-click="choosed_fenlei_articleList" />
-                            </el-col>
-                        </el-row>
-                        <div class="save-tree" style="display:flex; justify-content: space-between; margin-top: 10px;">
-                            <el-button @click="getFenleiTree()" type="warning">恢复结构</el-button>
-                            <el-button type="success" @click="saveFenleiTree()">保存结构</el-button>
-                            <el-button @click="getListData(currentpage, currentfenlei)" type="primary">全部文章获取
-                            </el-button>
-                        </div>
+        <el-row :gutter="10" style="margin:10px 30px;">
+            <el-col :span="7">
+                <div class="ylmty">
+                    <h5 style="font-size:25px;">分类结构</h5>
+                    <el-divider />
+                    <div style="display:flex; margin-bottom: 10px;">
+                        <el-input v-model="New_fenlei_name" placeholder="新分类名字" />
+                        <el-button @click="pushFenleiList()" type="success">保存</el-button>
                     </div>
-                </el-col>
-                <el-col :span="17">
-                    <div class="ylmty" style="height:720px;">
-                        <h5 style="font-size:25px;">{{ fenlei_name }}</h5>
-                        <el-divider />
-                        <el-row>
-                            <el-col v-for="item in article_list" :key="item.id" :span="24" class="colcard">
-                                <el-card shadow="hover" class="card">
-                                    <el-row style="align-items:center;">
-                                        <el-col :xs="24" :lg="5">
-                                            <el-image style="width: 120px; height: 70px; margin: 0 auto;"
-                                                :src="item.cover" :fit="'cover'" />
-                                        </el-col>
-                                        <el-col class="text-item" :xs="24" :lg="9">
-                                            <span>{{ item.title }}</span>
-                                        </el-col>
-                                        <el-col class="text-item" :xs="12" :lg="6">
-                                            <span>发布者：{{ item.nickName }}</span>
-                                        </el-col>
-                                        <el-col class="text-item" :xs="12" :lg="4">
-
-                                            <el-popover placement="right" :width="200"
-                                                trigger="hover">
-                                                <template #reference>
-                                                    <el-button type="warning" :icon="Plus">移动
-                                                    </el-button>
-                                                </template>
-                                                <el-tree :data="fenlei_tree" show-checkbox @node-click="choosed_fenlei"
-                                                    default-expand-all :expand-on-click-node="false" :hide-after="0" />
-                                                <el-button type="success" size="default"
-                                                    @click="saveArticleToFenlei(item.id)" :icon="Plus">确定</el-button>
-                                            </el-popover>
-
-                                        </el-col>
-                                    </el-row>
-                                </el-card>
-                            </el-col>
-                        </el-row>
-                        <!-- 分页器 -->
-                        <div class="pagination ylmty ">
-                            <el-pagination background layout="total,prev, pager, next" :total="total"
-                                :page-size="pagesize" @current-change="currnetChange" />
-                        </div>
+                    <el-row>
+                        <el-col>
+                            <el-tree :data="fenlei_tree" draggable default-expand-all node-key="id"
+                                :render-content="renderContent" :expand-on-click-node="false"
+                                @node-click="choosed_fenlei_articleList" />
+                        </el-col>
+                    </el-row>
+                    <div class="save-tree" style="display:flex; justify-content: space-between; margin-top: 10px;">
+                        <el-button @click="getFenleiTree()" type="warning">恢复结构</el-button>
+                        <el-button type="success" @click="saveFenleiTree()">保存结构</el-button>
+                        <el-button @click="getListData(currentpage, currentfenlei)" type="primary">未分类
+                        </el-button>
                     </div>
-                </el-col>
+                </div>
+            </el-col>
+            <el-col :span="17">
+                <div class="ylmty">
+                    <h5 style="font-size:25px;">{{ fenlei_name }}</h5>
+                    <el-divider />
+                    <el-row>
+                        <el-col v-for="item in article_list" :key="item.id" :span="24" class="colcard">
+                            <el-card shadow="hover" class="card">
+                                <el-row style="align-items:center;">
+                                    <el-col :xs="24" :lg="5">
+                                        <el-image style="width: 120px; height: 70px; margin: 0 auto;" :src="item.cover"
+                                            :fit="'cover'" />
+                                    </el-col>
+                                    <el-col class="text-item" :xs="24" :lg="9">
+                                        <span>{{ item.title }}</span>
+                                    </el-col>
+                                    <el-col class="text-item" :xs="12" :lg="6">
+                                        <span>发布者：{{ item.nickName }}</span>
+                                    </el-col>
+                                    <el-col class="text-item" :xs="12" :lg="4">
 
-            </el-row>
-        </div>
+                                        <el-popover placement="right" :width="200" trigger="hover">
+                                            <template #reference>
+                                                <el-button type="warning" :icon="Plus">移动
+                                                </el-button>
+                                            </template>
+                                            <el-tree :data="fenlei_tree" show-checkbox @node-click="choosed_fenlei"
+                                                default-expand-all :expand-on-click-node="false" :hide-after="0" />
+                                            <el-button type="success" size="default"
+                                                @click="saveArticleToFenlei(item.id)" :icon="Plus">确定</el-button>
+                                        </el-popover>
+
+                                    </el-col>
+                                </el-row>
+                            </el-card>
+                        </el-col>
+                    </el-row>
+                    <!-- 分页器 -->
+                    <div class="pagination ylmty ">
+                        <el-pagination background layout="total,prev, pager, next" :total="total" :page-size="pagesize"
+                            @current-change="currnetChange" />
+                    </div>
+                </div>
+            </el-col>
+
+        </el-row>
     </div>
 </template>
 
@@ -319,17 +316,11 @@ const getListData = (page, fenlei) => {
 // 监听分页返回
 let currnetChange = (val) => {
     currentpage.value = val
-    getListData(val,fenlei_name.value)
+    getListData(val, fenlei_name.value)
 }
 </script>
 
 <style scoped>
-#root {
-    max-width: 1366px;
-    margin: 0 auto;
-    margin-top: 70px;
-}
-
 .ylmty {
     padding: 10px 10px;
 }
@@ -345,10 +336,14 @@ let currnetChange = (val) => {
     margin-top: 5px;
 }
 
-#article-list .pagination {
+.pagination.ylmty {
     padding: 10px 10px;
     margin: 0 auto;
     margin-top: 10px;
+}
+
+.el-card__body {
+    padding: 0;
 }
 
 .text-item span {

@@ -1,7 +1,7 @@
 <template>
-    <div id="userperm">
-        <BreadMenu :page_name="'用户管理'"></BreadMenu>
-        <div class="body ylmty">
+    <div id="root">
+        <BreadMenu :page_name="'用户管理'" style="margin: 10px 30px;"></BreadMenu>
+        <div class="body ylmty" style="margin: 10px 30px;">
             <div style="display:flex; justify-content: flex-end;">
                 <el-button type="primary" :icon="Plus" @click="dialogVisible = true">新增用户组</el-button>
 
@@ -10,7 +10,7 @@
                 <h5 style="font-size:25px;">用户组</h5>
                 <el-divider />
                 <el-row :gutter="10">
-                    <el-col :lg="3" :xs="12" v-for="(item, index) in all_groups" :key="index">
+                    <el-col :lg="4" :xs="12" v-for="(item, index) in all_groups" :key="index">
                         <el-button-group class="ml-4">
                             <el-button type="primary">{{ item.name }}</el-button>
                             <el-button @click="deleteGroup(item.name)" type="primary" :icon="Delete" />
@@ -422,14 +422,10 @@ const saveNewGroup = () => {
 </script>
 
 <style scoped>
-#userperm {
-    max-width: 1366px;
-    margin: 0 auto;
-    margin-top: 70px;
-}
 
 .ylmty {
     padding: 10px 10px;
+    
 }
 
 .new_group {

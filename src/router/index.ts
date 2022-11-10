@@ -33,28 +33,6 @@ const routes: Array<RouteRecordRaw> = [
     name: '/404',
     component: () => import(/* webpackChunkName: "about" */ '../views/404.vue')
   },
-  // 其他设置
-  // {
-  //   path: '/other-settings',
-  //   name: '/OtherSettings',
-  //   component: () => import('../views/OtherSettings.vue'),
-  //   beforeEnter: (to, from, next) => {
-  //     if (store.state.userinfo.token) {
-  //       //判断用户权限
-  //       let checkInfo = {
-  //         contentType: 'auth_user',
-  //         permissions: ['add', 'change', 'delete', 'view']
-  //       }
-  //       store.dispatch("checkUserPerm", checkInfo).then((res)=>{
-  //         if (res) {
-  //           next()
-  //         }
-  //       })
-  //     } else {
-  //       next('/login')
-  //     }
-  //   }
-  // },
   //添加文章
   {
     path: '/add-Article',
@@ -81,23 +59,7 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/article',
     name: 'Article',
-    component: () => import('../views/Article.vue'),
-    beforeEnter: (to, from, next) => {
-      if (store.state.userinfo.token) {
-        //判断用户权限
-        let checkInfo = {
-          contentType: 'mweb_article',
-          permissions: ['view']
-        }
-        store.dispatch("checkUserPerm", checkInfo).then((res)=>{
-          if (res) {
-            next()
-          }
-        })
-      } else {
-        next('/login')
-      }
-    }
+    component: () => import('../views/Article.vue')
   },
   //文章列表
   {

@@ -10,10 +10,7 @@ export default createStore({
       headImg: '',
       nickName: '',
       token: '',
-    },
-    other_settings: {
-      isreg: '',
-      webt:''
+      isadmin: '',
     }
   },
   getters: {
@@ -71,7 +68,6 @@ export default createStore({
         // console.log(res.data)
         // localStorage.setItem('token', res.data.token)
         ElMessage.success('注册成功，请前往登录')
-        router.push({ path: '/login' })
       })
     },
     // 自动登录
@@ -149,16 +145,6 @@ export default createStore({
       })
       return perm_data
     },
-    // 获取其他设置
-    // getsettings(state) {
-    //   axios({
-    //     url: 'http://127.0.0.1:9000/api/other-settings/',
-    //     method: 'get'
-    //   }).then((res) => {
-    //     state.state.other_settings.isreg = res.data.isreg
-    //     state.state.other_settings.webt = res.data.webt
-    //   })
-    // }
   },
   modules: {
   }
