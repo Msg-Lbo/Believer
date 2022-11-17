@@ -21,7 +21,24 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/navigations',
     name: 'Navigations',
-    component: () => import(/* webpackChunkName: "about" */ '../views/Navigations.vue')
+    component: () => import(/* webpackChunkName: "about" */ '../views/Navigations.vue'),
+    children: [
+      {
+        path: 'friends',
+        name: 'Friends',
+        component: () => import('../components/Links/friends.vue')
+      },
+      {
+        path: 'navs',
+        name: 'Navs',
+        component: () => import('../components/Links/navs.vue')
+      },
+      {
+        path: 'tools',
+        name: 'Tools',
+        component: () => import('../components/Links/tools.vue')
+      },
+    ]
   },
   {
     path: '/login',
@@ -45,7 +62,7 @@ const routes: Array<RouteRecordRaw> = [
           contentType: 'mweb_article',
           permissions: ['add', 'change', 'delete', 'view']
         }
-        store.dispatch("checkUserPerm", checkInfo).then((res)=>{
+        store.dispatch("checkUserPerm", checkInfo).then((res) => {
           if (res) {
             next()
           }
@@ -73,7 +90,7 @@ const routes: Array<RouteRecordRaw> = [
           contentType: 'mweb_article',
           permissions: ['add', 'change', 'delete', 'view']
         }
-        store.dispatch("checkUserPerm", checkInfo).then((res)=>{
+        store.dispatch("checkUserPerm", checkInfo).then((res) => {
           if (res) {
             next()
           }
@@ -95,7 +112,7 @@ const routes: Array<RouteRecordRaw> = [
           contentType: 'auth_user',
           permissions: ['add', 'change', 'delete', 'view']
         }
-        store.dispatch("checkUserPerm", checkInfo).then((res)=>{
+        store.dispatch("checkUserPerm", checkInfo).then((res) => {
           if (res) {
             next()
           }
@@ -117,7 +134,29 @@ const routes: Array<RouteRecordRaw> = [
           contentType: 'mweb_fenlei',
           permissions: ['add', 'change', 'delete', 'view']
         }
-        store.dispatch("checkUserPerm", checkInfo).then((res)=>{
+        store.dispatch("checkUserPerm", checkInfo).then((res) => {
+          if (res) {
+            next()
+          }
+        })
+      } else {
+        next('/login')
+      }
+    }
+  },
+  // 控制台
+  {
+    path: '/manage',
+    name: 'Manage',
+    component: () => import('../views/manage.vue'),
+    beforeEnter: (to, from, next) => {
+      if (store.state.userinfo.token) {
+        //判断用户权限
+        let checkInfo = {
+          contentType: 'auth_user',
+          permissions: ['add', 'change', 'delete', 'view']
+        }
+        store.dispatch("checkUserPerm", checkInfo).then((res) => {
           if (res) {
             next()
           }

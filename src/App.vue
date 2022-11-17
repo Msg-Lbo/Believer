@@ -9,11 +9,9 @@
       <router-link to="/login" v-if="!authlogin.token">登录</router-link>
       <a v-else @click="logout" style="cursor:pointer;">退出</a>
     </div>
+    <br>
     <div class="header-menu" v-if="authlogin.isadmin && authlogin.token">
-      <router-link to="/add-article">添加</router-link><span class="_drop"></span>
-      <router-link to="/article-list">列表</router-link><span class="_drop"></span>
-      <router-link to="/fenlei-admin">分类</router-link><span class="_drop"></span>
-      <router-link to="/user-permission">用户</router-link>
+      <router-link to="/manage">控制台</router-link>
     </div>
     <footerVue></footerVue>
   </div>
@@ -29,9 +27,6 @@ import router from '@/router';
 
 import { watch, computed, ref, onMounted } from 'vue';
 import store from './store';
-import axios from 'axios';
-import { ElMessage } from 'element-plus';
-
 
 let authlogin = computed(() => {
   return store.getters.isnotUserlogin
@@ -112,9 +107,6 @@ const logout = () => {
   padding: 5px 10px;
   white-space: nowrap;
 }
-
-
-
 
 .main {
   height: 100%;

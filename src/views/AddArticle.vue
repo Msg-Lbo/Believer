@@ -1,8 +1,8 @@
 <template>
     <div id="root">
-        <BreadMenu :page_name="'添加文章'"></BreadMenu>
-        <el-row :gutter="20">
-            <el-col :span="10">
+        <BreadMenu :page_name="'添加文章'" :manage="'控制台'"></BreadMenu>
+        <el-row>
+            <el-col :span="24">
                 <div class="continue body ylmty">
                     <el-form :label-position="'top'" label-width="100px" :model="article_info">
                         <el-form-item label="标题">
@@ -14,7 +14,7 @@
                     </el-form>
                 </div>
             </el-col>
-            <el-col :span="14">
+            <el-col :span="24">
                 <div class="continue body ylmty">
                     <div class="uploadImg">
                         <input type="file" value="" id="upload" accept="image/*" @change="handleFiles">
@@ -25,7 +25,7 @@
             <el-col :span="24">
                 <div class="continue body ylmty">
                     <v-md-editor @change="onchange" @upload-image="handleUploadImage" @save="saveArticle"
-                        :left-toolbar=lefttoolbar :toolbar="toolbar" :disabled-menus="[]" height="600px"></v-md-editor>
+                        :left-toolbar=lefttoolbar :toolbar="toolbar" :disabled-menus="[]" height="900px"></v-md-editor>
                 </div>
             </el-col>
         </el-row>

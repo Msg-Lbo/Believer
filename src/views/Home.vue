@@ -9,13 +9,13 @@
         </div>
         <div class="content">
             <div class="list-title">
-                <span>标题 (▲=置顶 ▣=私密 ❖=普通)</span>
+                <span>标题 (▲=置顶 ❖=普通)</span>
                 <span>分类</span>
                 <span>浏览</span>
                 <span>评论</span>
                 <span>时间</span>
             </div>
-            <ul class="list top" v-for="(item, index) in top_articles" :key="index">
+            <ul class="list top" v-for="(item, index) in top_article" :key="index">
                 <li class="common">
                     <a @click="toArticle(item.id)">▲ {{ item.title }}</a>
                     <span><a href="/">{{ item.fenlei }}</a></span>
@@ -24,6 +24,7 @@
                     <span>{{ item.create_time }}</span>
                 </li>
             </ul>
+
             <ul class="list" v-for="(item, index) in article_list" :key="index">
                 <li class="common">
                     <a @click="toArticle(item.id)">❖ {{ item.title }}</a>
@@ -36,7 +37,7 @@
         </div>
         <!-- 分页器 -->
         <div class="pagination">
-            <el-pagination background layout="total,prev, pager, next" :total="total" :page-size="pagesize"
+            <el-pagination layout="total, prev, pager, next" :total="total" :page-size="pagesize"
                 @current-change="currnetChange" />
         </div>
     </div>
@@ -44,22 +45,21 @@
 
 <script lang="ts" setup>
 import router from '@/router';
-import store from '@/store';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-import Qs from 'qs';
 import { onMounted, reactive, ref } from 'vue';
 
 let currentpage = ref<number>(1)
 let pagesize = ref<number>(15)
 let total = ref<number>()
 let article_list = ref([])
-let top_articles = ref([])
+let top_article = ref([])
 let fenlei_name = ref<string>('all')
 let Total_number_of_articles = ref<number>()
 onMounted(() => {
     getFenleiTree()
     getListData(currentpage.value, fenlei_name.value)
+    getTopArticles()
 })
 
 const getListData = (page, fenlei) => {
@@ -72,11 +72,18 @@ const getListData = (page, fenlei) => {
             fenlei: fenlei
         }
     }).then((res) => {
-        // console.log(res.data)
         Total_number_of_articles.value = res.data.num
         article_list.value = res.data.data
         total.value = res.data.total
-        top_articles.value = res.data.top
+    })
+}
+
+const getTopArticles = () => {
+    axios({
+        url: 'http://127.0.0.1:9000/api/article-top/',
+        method: 'get'
+    }).then((res) => {
+        top_article.value = res.data
     })
 }
 
@@ -91,7 +98,6 @@ let currnetChange = (val) => {
 
 let fenlei_len = ref<number>()
 let fenlei_data = ref([])
-
 const getFenleiTree = () => {
     axios({
         url: 'http://127.0.0.1:9000/api/ylmty-fenlei/',
@@ -110,7 +116,6 @@ const getFenleiTree = () => {
 </script>
 
 <style scoped>
-
 .content {
     margin: 30px;
 }

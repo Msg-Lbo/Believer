@@ -108,11 +108,6 @@ onMounted(() => {
     getUserList()
 })
 
-
-// 选择用户组
-const chooseGroup = (index) => {
-    choosed_group.value = index
-}
 // 
 const dialogFormVisible = ref(false)
 const Edit_form = reactive({
@@ -121,16 +116,7 @@ const Edit_form = reactive({
     id: null,
 })
 
-// 保存用户分配
-const choosed_group = ref<number>(0)
 const setUsertoGroup = () => {
-    // let Edit_Group = Edit_form.group
-    // let Edit_Username = Edit_form.name
-
-    if (userlist.length == 0) {
-        ElMessage.warning("未选择用户..")
-        return
-    }
     //提交用户组分配
     axios({
         url: 'http://127.0.0.1:9000/api/ylmty-group/',
@@ -142,7 +128,6 @@ const setUsertoGroup = () => {
             newusername: Edit_form.name
         })
     }).then((res) => {
-        console.log(res.data)
         if (res.data == 'nologin') {
             ElMessage.error('用户信息过期或未登录.')
             return
@@ -434,8 +419,6 @@ const saveNewGroup = () => {
 
 .perm-list {
     margin-top: 10px;
-    border: 1px solid;
-    border-radius: 5px;
     padding: 5px;
 }
 

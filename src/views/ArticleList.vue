@@ -1,39 +1,53 @@
 <template>
     <div id="root">
         <!-- 面包屑导航 -->
-        <BreadMenu :page_name="'文章列表'"></BreadMenu>
+        <BreadMenu :page_name="'文章列表'" :manage="'控制台'"></BreadMenu>
         <!-- 置顶文章 -->
-        <div class="top">
+        <!-- <div class="top">
             <span>填入置顶文章ID,用英文逗号隔开 ","</span>
             <el-input v-model="top_array" placeholder="Please input">
                 <template #append>
                     <el-button @click="sub_top_array">Primary</el-button>
                 </template>
             </el-input>
-        </div>
+        </div> -->
         <!-- 文章列表 -->
-        <div class="table">
-            <el-table :data="article_list" stripe :align="'center'" :default-sort="{ prop: 'id', order: 'ascending' }"
-                style="width: 100%;" row-key="id">
-                <el-table-column align="center" label="ID" prop="id" sortable width="80" />
-                <el-table-column align="center" label="文章标题" prop="title" />
-                <el-table-column align="center" label="分类" prop="fenlei" />
-                <el-table-column align="center" label="发布日期" sortable prop="create_time" />
-                <el-table-column align="center" label="操作">
-                    <template #default="scope">
-                        <el-button size="small" type="primary" @click="toArticle(scope.$index, scope.row)">查看
-                        </el-button>
-                        <el-button size="small" type="warning" @click="handleEdit(scope.$index, scope.row)">修改
-                        </el-button>
-                        <el-button size="small" type="danger" @click="deleteArticle(scope.$index, scope.row)">删除
-                        </el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
+        <div class="content">
+            <div class="list-title">
+                <span>标题(▲=置顶 ❖=普通)</span>
+                <span>分类</span>
+                <span>时间</span>
+                <span>操作</span>
+            </div>
+            <ul class="list" v-for="(item, index) in top_article" :key="index">
+                <li class="common">
+                    <a @click="toArticle(item.id)">▲{{ item.title }}</a>
+                    <span><a>{{ item.fenlei }}</a></span>
+                    <span>{{ item.create_time }}</span>
+                    <span class="actions">
+                        <a @click="In_top(item.id)" style="color:#3498db">取消置顶</a>
+                        <a @click="handleEdit(item.id)" style="color:#e67e22">编辑</a>
+                        <a @click="deleteArticle(item.id)" style="color:#e74c3c">删除</a>
+                    </span>
+                </li>
+            </ul>
+
+            <ul class="list" v-for="(item, index) in article_list" :key="index">
+                <li class="common">
+                    <a @click="toArticle(item.id)">❖{{ item.title }}</a>
+                    <span><a>{{ item.fenlei }}</a></span>
+                    <span>{{ item.create_time }}</span>
+                    <span class="actions">
+                        <a @click="In_top(item.id)" style="color:#2ecc71">置顶</a>
+                        <a @click="handleEdit(item.id)" style="color:#e67e22">编辑</a>
+                        <a @click="deleteArticle(item.id)" style="color:#e74c3c">删除</a>
+                    </span>
+                </li>
+            </ul>
         </div>
         <!-- 分页器 -->
         <div class="pagination">
-            <el-pagination background layout="total,prev, pager, next" :total="total" :page-size="pagesize"
+            <el-pagination layout="total,prev, pager, next" :total="total" :page-size="pagesize"
                 @current-change="currnetChange" />
         </div>
     </div>
@@ -51,26 +65,45 @@ import router from '@/router';
 let currentpage = ref<number>(1)
 let pagesize = ref<number>(10)
 let total = ref<number>()
-let top_array = ref([])
+let top_article = ref([])
 onMounted(() => {
     getListData(currentpage.value)
+    getTopArticles()
 })
 
-const sub_top_array = () => {
+// 置顶
+const In_top = (id) => {
     axios({
-        url: 'http://127.0.0.1:9000/api/article-list/',
+        url: 'http://127.0.0.1:9000/api/article-top/',
         method: 'post',
         data: Qs.stringify({
-            topArray: top_array.value,
+            id: id,
             token: store.getters.isnotUserlogin.token
         })
     }).then((res) => {
-        if (res.data == 'ok') {
-            ElMessage.success('修改成功')
+        if (res.data == 'top') {
+            ElMessage.success('文章置顶成功')
+            getTopArticles()
+            getListData(currentpage.value)
+        }
+        if (res.data == 'cancel') {
+            ElMessage.warning('取消置顶成功')
+            getTopArticles()
+            getListData(currentpage.value)
         }
     })
 }
 
+const getTopArticles = () => {
+    axios({
+        url: 'http://127.0.0.1:9000/api/article-top/',
+        method: 'get'
+    }).then((res) => {
+        top_article.value = res.data
+    })
+}
+
+// 获取全部文章
 const getListData = (page) => {
     axios({
         url: 'http://127.0.0.1:9000/api/article-list/',
@@ -82,39 +115,28 @@ const getListData = (page) => {
         }
     }).then((res) => {
         article_list.value = res.data.data
-        article_list.value.push.apply(res.data.data, res.data.top)
-        res.data.top.forEach((item) => {
-            top_array.value.push(item["id"])
-        })
         total.value = res.data.total
     })
 }
 
-interface list {
-    id: number
-    date: string
-    title: string
-    create_time: string
-    nickName: string
-}
-// let article_list: list[] = []
 let article_list = ref([])
-const handleEdit = (index: number, row: list) => {
-    console.log(row)
+const handleEdit = (id) => {
+    console.log(id)
 }
 
-const toArticle = (index: number, row: list) => {
-    router.push({ path: '/article', query: { id: row.id } })
+const toArticle = (id) => {
+    router.push({ path: '/article', query: { id: id } })
 }
 
+// 分页
 let currnetChange = (val) => {
     // console.log(val)
     currentpage.value = val
     getListData(val)
 }
 
-
-const deleteArticle = (index: number, row: list) => {
+// 删除文章
+const deleteArticle = (id) => {
     ElMessageBox.confirm(
         '当前操作不可逆，请确认是否删除！',
         '警告',
@@ -133,7 +155,7 @@ const deleteArticle = (index: number, row: list) => {
                     url: 'http://127.0.0.1:9000/api/delete-article/',
                     method: 'delete',
                     data: Qs.stringify({
-                        id: row.id,
+                        id: id,
                         token: store.getters.isnotUserlogin.token
                     }),
                     headers: {
@@ -189,8 +211,122 @@ span {
     margin: 10px 30px;
 }
 
-.table {
-    margin: 10px 30px;
-    border: 1px solid #90939960;
+.content {
+    margin: 30px;
+}
+
+.list-title {
+    background: #f5f6f8;
+    line-height: 33px;
+    margin-bottom: 5px;
+    display: flex;
+    padding: 0 10px;
+    border-radius: 2px;
+}
+
+.list-title *:nth-child(1) {
+    flex: 1;
+    text-align: left;
+}
+
+.list-title *:nth-child(2) {
+    min-width: 200px;
+}
+
+.list-title *:last-child {
+    min-width: 180px;
+}
+
+.list-title span {
+    color: #373e4e;
+    font-size: 14px;
+    white-space: nowrap;
+    min-width: 100px;
+    text-align: center;
+}
+
+ul {
+    margin: 0;
+}
+
+.list {
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    transition: all .2s;
+}
+
+.list:hover {
+    background-color: #9ea6bb20;
+    cursor: pointer;
+}
+
+.list li {
+    padding: 6px 10px;
+    list-style: none;
+    margin: 0;
+    width: 100%;
+    display: flex;
+}
+
+.list span {
+    color: #a7a8ac;
+    font-size: 14px;
+    display: inline-block;
+    white-space: nowrap;
+    min-width: 100px;
+    text-align: center;
+}
+
+.list a {
+    text-decoration: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.list span a {
+    margin: 0 5px;
+    color: inherit;
+}
+
+.top a {
+    color: #fb7a89;
+}
+
+
+a {
+    color: #373e4e;
+}
+
+.list li>*:nth-child(2) {
+    min-width: 200px;
+}
+
+.list li>*:last-child {
+    min-width: 180px;
+}
+
+.pagination {
+    margin: 30px;
+}
+
+@media (max-width: 768px) {
+    .content {
+        margin: 30px 5px;
+    }
+
+    .list-title {
+        display: none;
+    }
+
+    .list span {
+        display: none;
+    }
+
+    .list .actions {
+        display: block;
+    }
 }
 </style>
