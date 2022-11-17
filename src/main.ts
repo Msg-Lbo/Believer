@@ -5,7 +5,9 @@ import store from './store'
 import ElementPlus from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/dist/index.css'
-import axios from '@/http'
+// import axios from '@/http'
+// ↑加载动画↓无加载动画
+import axios from 'axios'
 import './assets/css/reset.css'
 import './assets/icon/iconfont.css'
 // github主题

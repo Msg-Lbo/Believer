@@ -4,11 +4,7 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: "404",
-    components: {},
-}
+<script lang="ts" setup>
 </script>
 <style scoped>
 .not-found {
